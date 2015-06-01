@@ -64,6 +64,15 @@ public class ImageLoader{
     
     //BUTTON ICONS
     public final BufferedImage TOWER1_ICON;
+    public final BufferedImage TOWER_ARCHER_ICON;
+    public final BufferedImage TOWER_FIRE_ICON;
+    public final BufferedImage TOWER_GEN1_ICON;
+    public final BufferedImage TOWER_GEN2_ICON;
+    public final BufferedImage TOWER_GEN3_ICON;
+    public final BufferedImage TOWER_ICE_ICON;
+    public final BufferedImage TOWER_MORTAR_ICON;
+    public final BufferedImage TOWER_POISON_ICON;
+    public final BufferedImage TOWER_LOCKED_ICON;
     
     
     public ImageLoader() throws Exception{
@@ -119,6 +128,15 @@ public class ImageLoader{
         
         //BUTTON FRAMES
         TOWER1_ICON= ImageIO.read(new FileInputStream("Resources/tower1_icon2.png"));
+        TOWER_ARCHER_ICON= ImageIO.read(new FileInputStream("Resources/tower-archer-icon.jpg"));
+        TOWER_FIRE_ICON= ImageIO.read(new FileInputStream("Resources/tower-fire-icon.jpg"));
+        TOWER_GEN1_ICON= ImageIO.read(new FileInputStream("Resources/tower-gen1-icon.jpg"));
+        TOWER_GEN2_ICON= ImageIO.read(new FileInputStream("Resources/tower-gen2-icon.jpg"));
+        TOWER_GEN3_ICON= ImageIO.read(new FileInputStream("Resources/tower-gen3-icon.jpg"));
+        TOWER_ICE_ICON= ImageIO.read(new FileInputStream("Resources/tower-ice-icon.jpg"));
+        TOWER_MORTAR_ICON= ImageIO.read(new FileInputStream("Resources/tower-mortar-icon.jpg"));
+        TOWER_POISON_ICON= ImageIO.read(new FileInputStream("Resources/tower-poison-icon.jpg"));
+        TOWER_LOCKED_ICON= ImageIO.read(new FileInputStream("Resources/tower-locked-icon.jpg"));
         
         /*
         */

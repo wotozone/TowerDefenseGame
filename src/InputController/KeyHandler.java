@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import mainFrame.MainPanel;
 
 public class KeyHandler implements KeyListener {
 
@@ -36,6 +37,12 @@ public class KeyHandler implements KeyListener {
             case 16: // Shift
             case 77: // M
             case 80: // P
+                if(MainPanel.TEST){
+                    MainPanel.TEST=false;
+                }else{
+                    MainPanel.TEST=true;
+                }
+                break;
             case 48: // 0
             case 49: // 1
             case 50: // 2

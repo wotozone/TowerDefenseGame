@@ -26,6 +26,7 @@ public class TowerController {
     public void createTower(PathController path, int towerType){
         td=TowerInfo.info.getTowerData(towerType, path);
         path.setTileType(1);
+        path.setTowerData(td);
         TowerData.tower.add(td);
     }
     

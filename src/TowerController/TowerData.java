@@ -44,6 +44,8 @@ public class TowerData {
     
     public int attackTimer=0;
     
+    public int towerID=0;
+    
     public static ArrayList<TowerData> tower = new ArrayList<TowerData>();
     
     public void initTowerData(int atk, int range, int splash, int atkSpeed, int missileSpeed,int price){
@@ -128,6 +130,9 @@ public class TowerData {
         primaryTarget=enemy;
     }
     
+    public void setTowerID(int towerID){
+        this.towerID=towerID;
+    }
     
     
     
@@ -187,6 +192,10 @@ public class TowerData {
     
     public EnemyData getPrimaryTarget(){
         return primaryTarget;
+    }
+    
+    public int getTowerID(){
+        return towerID;
     }
     
     public void clearData(){

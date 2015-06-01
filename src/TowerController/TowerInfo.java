@@ -47,6 +47,7 @@ public class TowerInfo {
         output=new TowerData();
         resetOutput(output);
         getTowerStat(towerID);
+        output.setTowerID(towerID);
         getTowerImage(towerID,false);
         getTowerPosition(path,towerID);
         return output;
@@ -65,19 +66,44 @@ public class TowerInfo {
     private void getTowerStat(int towerID){
         switch(towerID){
             case 1:
-                output.initTowerData(2, 125, 50, 3, getTowerPrice(towerID));//(damage,range.atkspeed,missilespeed,price)
+                output.initTowerData(2, 125, 50, 4, getTowerPrice(towerID));//(damage,range.atkspeed,missilespeed,price)
                 x=0;
                 y=0;
                 seperated=false;
                 break;
             case 2:
-                output.initTowerData(1, 75, 5, 2, getTowerPrice(towerID));
+                output.initTowerData(1, 75, 5, 3, getTowerPrice(towerID));
                 x=0;
                 y=0;
                 seperated=false;
                 break;
             case 3:
                 output.initTowerData(30, 500, 500, 10, getTowerPrice(towerID));
+                x=0;
+                y=0;
+                break;
+            case 4:
+                output.initTowerData(5, 200, 50, 1, getTowerPrice(towerID));
+                x=0;
+                y=0;
+                break;
+            case 5:
+                output.initTowerData(10, 100, 30, 4, getTowerPrice(towerID));
+                x=0;
+                y=0;
+                break;
+            case 6:
+                output.initTowerData(20, 300, 50, 5, getTowerPrice(towerID));
+                x=0;
+                y=0;
+                break;
+            case 7:
+                output.initTowerData(100, 125, 40, 4, getTowerPrice(towerID));
+                x=0;
+                y=0;
+                break;
+            case 8:
+                output.initTowerData(80, 300, 30, 6, getTowerPrice(towerID));
                 x=0;
                 y=0;
                 break;
@@ -91,7 +117,17 @@ public class TowerInfo {
             case 2:
                 return 200;
             case 3:
-                return 40;
+                return 400;
+            case 4:
+                return 450;
+            case 5:
+                return 650;
+            case 6:
+                return 1000;
+            case 7:
+                return 1400;
+            case 8:
+                return 2000;
             default:
                 return 10;
         }

@@ -5,30 +5,44 @@
  */
 package panels;
 
+import com.michael.api.Encoder;
+import includes.GetPassword;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import static main.MainFrame.mainFrame;
 import net.miginfocom.swing.MigLayout;
+import static towerdefenseproject.MysqlCon.connectionStatus;
+import static towerdefenseproject.MysqlCon.dbClose;
+import static towerdefenseproject.MysqlCon.dbOpen;
+import static towerdefenseproject.MysqlCon.query;
 
 /**
  * @author Chris
  */
 public class LoginPage implements ActionListener {
 	
-	public static JTextField email = new JTextField();
-	public static JPasswordField password = new JPasswordField();
+	public static JTextField email;
+	public static JPasswordField password;
 	
 	public static void displayLogin(){
+		email =  new JTextField();
+		password = new JPasswordField();
 		mainFrame.resetFrame("Login","300","400",false,true);
 		JPanel container = new JPanel();
 		container.setLayout(new MigLayout(mainFrame.debugCheck()+""));
@@ -74,11 +88,39 @@ public class LoginPage implements ActionListener {
 		String action = ae.getActionCommand();
 		switch(action){
 			case "signIn":
-				MainMenuPage.displayMenuPage();
+				LoginUser();
 				break;
 			case "addAccount":
 				SignUpPage.displaySignUpPage();
 				break;
 		}
+	}
+
+	private void LoginUser() {
+		MainMenuPage.displayMenuPage();
+		dbOpen();
+		if (connectionStatus()){
+			String enteredEmail = email.getText();
+			String enteredPassword = GetPassword.getPassword(password.getPassword());
+			PreparedStatement state = query("SELECT id FROM td_users WHERE email = ? AND password = ?");
+			try {
+				state.setString(1,enteredEmail);
+				state.setString(2,Encoder.getMd5(enteredPassword));
+				ResultSet result = state.executeQuery();
+				if (result.next()!=false){
+					// todo save this userId, seralize?
+					String userId = result.getString("id");
+					dbClose();
+					MainMenuPage.displayMenuPage();
+				} else {
+					JOptionPane.showMessageDialog(null,"The credentials you provided were incorrect, please try again.","Error Logging In",2);
+				}
+			} catch (SQLException ex) {
+				JOptionPane.showMessageDialog(null,"There is an error with your SQL commands, you will not be able to play this game until this is fixed.","Fatal Error",0);
+			}
+		} else {
+			JOptionPane.showMessageDialog(null,"There is no database connection, you will not be able to play this game until this is fixed.","Fatal Error",0);
+		}
+		dbClose();
 	}
 }

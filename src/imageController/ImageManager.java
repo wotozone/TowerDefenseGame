@@ -60,7 +60,7 @@ public class ImageManager{
             return imageLoader.ENEMY_DUMMY;
         }
         System.out.println("No matched image");
-        return null;
+        return imageLoader.ENEMY_DUMMY;
     }
     
     public BufferedImage getUnitImage(int level){
@@ -68,7 +68,7 @@ public class ImageManager{
             return imageLoader.ENEMY_DUMMY;
         }
         if(MainPanel.TEST)return imageLoader.ENEMY_DUMMY;
-        return null;
+        return imageLoader.ENEMY_DUMMY;
     }
     
     public BufferedImage getCastleImage(){
@@ -80,12 +80,23 @@ public class ImageManager{
     }
     
     public BufferedImage getTowerIconImage(int towerID){
-        if(towerID==1){
-            return imageLoader.TOWER1_ICON;
+        switch(towerID){
+            case 1: return imageLoader.TOWER_ARCHER_ICON;
+            case 2: return imageLoader.TOWER_FIRE_ICON;
+            case 3: return imageLoader.TOWER_GEN1_ICON;
+            case 4: return imageLoader.TOWER_GEN2_ICON;
+            case 5: return imageLoader.TOWER_GEN3_ICON;
+            case 6: return imageLoader.TOWER_ICE_ICON;
+            case 7: return imageLoader.TOWER_MORTAR_ICON;
+            case 8: return imageLoader.TOWER_POISON_ICON;
+            default: 
+                if(MainPanel.TEST){
+                    return imageLoader.TOWER1_ICON;
+                }else{
+                    System.out.println("No matched image");
+                    return imageLoader.TOWER_LOCKED_ICON;
+                }
         }
-        if(MainPanel.TEST)return imageLoader.TOWER1_ICON;
-        System.out.println("No matched image");
-        return null;
     }
     
     public BufferedImage getTowerImage(String tower){
@@ -130,7 +141,7 @@ public class ImageManager{
                     return imageLoader.TOWER1_HEAD;
                 }else{
                     System.out.println("No matched image");
-                    return null;
+                    return imageLoader.TOWER1_HEAD;
                 }
         }
     }
@@ -141,7 +152,7 @@ public class ImageManager{
         }
         if(MainPanel.TEST)return imageLoader.MISSILE_DUMMY;
         System.out.println("No matched image");
-        return null;
+        return imageLoader.MISSILE_DUMMY;
     }
     
     public BufferedImage getMissileImage(int type){
@@ -149,7 +160,7 @@ public class ImageManager{
             return imageLoader.MISSILE_DUMMY;
         }
         if(MainPanel.TEST)return imageLoader.MISSILE_DUMMY;
-        return null;
+        return imageLoader.MISSILE_DUMMY;
     }
     /*
     public BufferedImage getBlockColorImage(int value){

@@ -16,7 +16,7 @@ import static main.MainFrame.mainFrame;
  */
 public class SplashScreen implements Runnable {
 	
-	private static final int  displayTime = 5000; // 1000 miliseconds is 1 second
+	private static final int  displayTime = 0; // 1000 miliseconds is 1 second
 	
 	public void run(){
 		

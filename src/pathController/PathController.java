@@ -5,6 +5,7 @@
  */
 package pathController;
 
+import TowerController.TowerData;
 import java.awt.image.BufferedImage;
 import mainFrame.MainPanel;
 
@@ -41,6 +42,8 @@ public class PathController {
     private int positionX=0;
     private int positionY=0;
     
+    private TowerData tower=null;
+    
     public static PathController[][] path = new PathController[MainPanel.TILE_MAX_X_NUM][MainPanel.TILE_MAX_Y_NUM];
     
     public void setTileType(int type){
@@ -67,6 +70,10 @@ public class PathController {
                 setTilePathway(4);
                 break;
         }
+    }
+    
+    public void setTowerData(TowerData tower){
+        this.tower=tower;
     }
     
     public void setTilePosition(int x, int y){
@@ -108,6 +115,10 @@ public class PathController {
     
     public int getPathDir(){
         return pathDir;
+    }
+    
+    public TowerData getTowerData(){
+        return tower;
     }
     
 }

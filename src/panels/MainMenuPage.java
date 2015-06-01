@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import main.MainFrame;
 import static main.MainFrame.mainFrame;
 import mainFrame.GameStart;
 import net.miginfocom.swing.MigLayout;
@@ -27,10 +28,11 @@ public class MainMenuPage implements ActionListener, MouseListener {
 	private static JLabel leftArrow;
 	private static JLabel rightArrow;
 	private static JPanel levelImage;
-	private static int choosenLevel = 1;
+	private static int choosenLevel;
 	
 	public static void displayMenuPage(){
-		mainFrame.resetFrame("Create Account","50%","400",false,true);
+		choosenLevel = 1;
+		mainFrame.resetFrame("Create Account","100%","100%",false,true);
 		JPanel container = new JPanel();
 		container.setLayout(new MigLayout(mainFrame.debugCheck()+""));
 		//
@@ -61,14 +63,14 @@ public class MainMenuPage implements ActionListener, MouseListener {
 		leftArrow.setHorizontalAlignment(SwingConstants.RIGHT);
 		leftArrow.setName("menuLeftArrow");
 		leftArrow.addMouseListener(new MainMenuPage());
-		container.add(leftArrow,"w 20%,right,grow,push");
-		container.add(levelImage,"w 80%,center,grow,push");
+		container.add(leftArrow,"w 25%,right,grow,push");
+		container.add(levelImage,"w 70%,center,gaptop 25px,gapbottom 15px,grow,push");
 		rightArrow.setName("menuRightArrow");
 		rightArrow.addMouseListener(new MainMenuPage());
-		container.add(rightArrow,"w 20%,left,grow,push,wrap");
+		container.add(rightArrow,"w 25%,left,grow,push,wrap");
 		play.setActionCommand("play");
 		play.addActionListener(new MainMenuPage());
-		container.add(play,"sg btn,span3,w 60%,h 40px,gap 0 0 10px 10px,center,wrap");
+		container.add(play,"sg btn,span3,w 35%,h 50px,gap 0 0 10px 10px,center,wrap");
 		scores.setActionCommand("scores");
 		scores.addActionListener(new MainMenuPage());
 		container.add(scores,"sg btn,span3,gap 0 0 8px 8px,center,wrap");
@@ -119,6 +121,7 @@ public class MainMenuPage implements ActionListener, MouseListener {
 			case "scores":
 				break;
 			case "help":
+				InstructionsPage.displayInstructions();
 				break;
 			case "goBack":
 				LoginPage.displayLogin();

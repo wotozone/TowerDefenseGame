@@ -61,8 +61,9 @@ public class MainFrame extends JFrame {
 		frameHeight = screenSize.height;
 		// Hide frame
 		activeClass = "";
+		boolean fullScreen = false;
 		mainFrame.dispose();
-		float intWidth, intHeight, tmpNum;
+		float intWidth = 0, intHeight = 0, tmpNum;
 		if (width==""){ 
 			intWidth = frameWidth;
 		} else if (width.contains("%")) {
@@ -70,7 +71,11 @@ public class MainFrame extends JFrame {
 			if (tmpNum>=5&&tmpNum<=99){
 				intWidth = frameWidth*(tmpNum/100);
 			} else {
-				intWidth = frameWidth;
+				if (tmpNum==100){
+					fullScreen = true;
+				} else {
+					intWidth = frameWidth;
+				}
 			}
 		} else {
 			intWidth = Integer.parseInt(width.replaceAll("[^\\d]",""));
@@ -82,7 +87,11 @@ public class MainFrame extends JFrame {
 			if (tmpNum>=5&&tmpNum<=99){
 				intHeight = frameHeight*(tmpNum/100);
 			} else {
-				intHeight = frameHeight;
+				if (tmpNum==100){
+					fullScreen = true;
+				} else {
+					intHeight = frameHeight;
+				}
 			}
 		} else {
 			intHeight = Integer.parseInt(height.replaceAll("[^\\d]",""));
@@ -108,8 +117,17 @@ public class MainFrame extends JFrame {
 		// Clear the old frame and display the new frame contents
 		mainFrame.setTitle(title);
 		mainFrame.getContentPane().removeAll();
-		mainFrame.setSize((int) intWidth,(int) intHeight);
-		mainFrame.setLocationRelativeTo(null);
+		if (fullScreen==true){
+			System.out.println("MADE IT");
+			mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			mainFrame.setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(), (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+			mainFrame.setLocation(0,0);
+		} else {
+			System.out.println("WHY?");
+			mainFrame.setSize((int) intWidth,(int) intHeight);
+			mainFrame.setLocationRelativeTo(null);
+		}
+//		mainFrame.setLocationRelativeTo(null);
 	}
 	
 	public void addContent(JPanel content,String migLayoutConstraints){

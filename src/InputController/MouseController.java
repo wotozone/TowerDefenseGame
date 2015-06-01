@@ -5,6 +5,7 @@
  */
 package InputController;
 
+import GameController.DataDisplayer;
 import GameController.PlayerData;
 import pathController.PathController;
 import pathController.PathFinder;
@@ -32,17 +33,38 @@ public class MouseController {
             case 0:
                 break;
             case 1:
-                if(isBuilding)buildTower();
+                if(isBuilding){
+                    buildTower();
+                }else{
+                    clickTower();
+                }
                 break;
             case 2:
                 selectTower();
                 break;
+            case 3:
+                destroyTower();
+                break;
+        }
+    }
+    
+    private void destroyTower(){
+        TowerData dummy=DataDisplayer.dd.sellingTower;
+        if(TowerData.tower.remove(dummy)){
+            dummy.position.setTileEmpty();
+            dummy.position.setTowerData(null);
+            DataDisplayer.dd.clearData();
+        }else{
+            System.out.println("Not in the tower array");
         }
     }
     
     private void selectTower(){
         towerID = getTowerType();
-        if(towerID!=0)isBuilding=true;
+        if(towerID!=0){
+            isBuilding=true;
+            DataDisplayer.dd.setData(towerID);
+        }
     }
     
     private void buildTower(){
@@ -51,11 +73,19 @@ public class MouseController {
             if(PlayerData.player.useGold(TowerInfo.info.getTowerPrice(towerID))){
                 TowerController.tc.createTower(path, towerID);
                 System.out.println("TOWER ID: "+towerID);
+                DataDisplayer.dd.clearData();
             }
         }else{
             System.out.println("Unable to build in this Path: "+path.getTileType());
         }
         reset();
+    }
+    
+    private void clickTower(){
+        PathController path = PathFinder.pf.findPath(x, y);
+        if(path.getTileType()==1){
+            DataDisplayer.dd.setData(path.getTowerData().getTowerID(), path.getTowerData());
+        }
     }
     
     private void reset(){
@@ -74,19 +104,19 @@ public class MouseController {
             if(y<545){
                 return 3;
             }else{
-                //return 4;
+                return 4;
             }
         }else if(x<665){
             if(y<545){
-                //return 5;
+                return 5;
             }else{
-                //return 6;
+                return 6;
             }
         }else if(x<740){
             if(y<545){
-                //return 7;
+                return 7;
             }else{
-                //return 8;
+                return 8;
             }
         }else if(x<815){
             if(y<545){
@@ -125,8 +155,15 @@ public class MouseController {
             return 1;
         }else if(y>470){//info
             if(x<440){//info area do nothing
-                System.out.println("System: 0");
-                return 0;
+                if(x>300&&x<425&&y>550&&y<600){
+                    if(DataDisplayer.dd.sellTower){
+                        System.out.println("System: 3");
+                        return 3;
+                    }else{
+                        System.out.println("System: 0");
+                        return 0;
+                    }
+                }
             }else{//build tower
                 System.out.println("System: 2");
                 return 2;

@@ -135,9 +135,11 @@ public class EnemyData {
                 shieldHp-=dmg;
             }
         }else{
-            dead=true;
-            EnemyData.enemy.remove(this);
-            PlayerData.player.gainGold(unitGold);
+            if(!dead){
+                dead=true;
+                EnemyData.enemy.remove(this);
+                PlayerData.player.gainGold(unitGold);
+            }
             //Dead //need method for dying event; might be in a child class
         }
     }

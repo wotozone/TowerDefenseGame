@@ -5,6 +5,7 @@
  */
 package mainFrame;
 
+import GameController.DataDisplayer;
 import GameController.PlayerData;
 import pathController.PathController;
 import InputController.KeyHandler;
@@ -70,11 +71,11 @@ public class MainPanel extends JFrame implements Runnable{
     
     private Timer timer;
     
-    public static final boolean TEST = true;//for testing
+    public static boolean TEST = true;//for testing
     
     public boolean enemytest=true;
 
-	public static boolean keepGameAlive = true;
+    public static boolean keepGameAlive = true;
 
     public MainPanel() {
   
@@ -92,6 +93,8 @@ public class MainPanel extends JFrame implements Runnable{
 
         start=true;
         end=false;
+        
+        
 
 
 
@@ -113,24 +116,28 @@ public class MainPanel extends JFrame implements Runnable{
         timer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run(){
-                if(levelDelay>EnemyInfo.levelDelay){
-                    System.out.println("Next Level");
-                    ec.getNextLevelEnemy();
-                    levelDelay=0;
-                    //enemytest=false;
-                }else{
-                    levelDelay++;
-                    System.out.println(levelDelay);
-                }
-                if(!ec.spawnQueue.isEmpty()){
-                    System.out.println(ec.spawnQueue.size());
-                    EnemyData.enemy.add(ec.spawnQueue.get(0));
-                    ec.spawnQueue.remove(0);
-                }
-                if(EnemyData.enemy.isEmpty()){
-                    if(10<(((EnemyInfo.levelDelay-levelDelay)*EnemyInfo.respondDelay)/1000)){
-                        levelDelay=EnemyInfo.levelDelay-(10000/EnemyInfo.respondDelay);
+                if(start){
+                    if(levelDelay>EnemyInfo.levelDelay){
+                        System.out.println("Next Level");
+                        ec.getNextLevelEnemy();
+                        levelDelay=0;
+                        //enemytest=false;
+                    }else{
+                        levelDelay++;
+                        System.out.println(levelDelay);
                     }
+                    if(!ec.spawnQueue.isEmpty()){
+                        System.out.println(ec.spawnQueue.size());
+                        EnemyData.enemy.add(ec.spawnQueue.get(0));
+                        ec.spawnQueue.remove(0);
+                    }
+                    if(EnemyData.enemy.isEmpty()){
+                        if(10<(((EnemyInfo.levelDelay-levelDelay)*EnemyInfo.respondDelay)/1000)){
+                            levelDelay=EnemyInfo.levelDelay-(10000/EnemyInfo.respondDelay);
+                        }
+                    }
+                }else{
+                    timer.cancel();
                 }
             }
         }, 0, EnemyInfo.respondDelay);
@@ -155,6 +162,7 @@ public class MainPanel extends JFrame implements Runnable{
 
             Thread.sleep(1);//optimizing fps
 
+            
             if(start) {
                 for(int i=0;i<TowerData.tower.size();i++){
                     td = TowerData.tower.get(i);
@@ -174,8 +182,8 @@ public class MainPanel extends JFrame implements Runnable{
                         td.attackTimer=0;
                     }
                 }
+                draw();
             }
-            draw();
         }  
         }catch(Exception e){
             e.printStackTrace(); 
@@ -206,43 +214,33 @@ public class MainPanel extends JFrame implements Runnable{
             gs.setColor(Color.LIGHT_GRAY);
             gs.fillRect(0, 450, 440, 170);
             
-            gs.drawImage(imageManager.getTowerIconImage(1), 440, 470, this);
-            gs.drawImage(imageManager.getTowerIconImage(1), 440, 545, this);
-            gs.drawImage(imageManager.getTowerIconImage(1), 515, 470, this);
-            /*
-            gs.setColor(Color.RED);
-            gs.fillRect(480, 760, 100, 100);
-            gs.setColor(Color.BLUE);
-            gs.fillRect(480, 860, 100, 100);
-            gs.setColor(Color.GREEN);
-            gs.fillRect(580, 760, 100, 100);
-            gs.setColor(Color.YELLOW);
-            gs.fillRect(580, 860, 100, 100);
-            gs.setColor(Color.RED);
-            gs.fillRect(680, 760, 100, 100);
-            gs.setColor(Color.BLUE);
-            gs.fillRect(680, 860, 100, 100);
-            gs.setColor(Color.GREEN);
-            gs.fillRect(780, 760, 100, 100);
-            gs.setColor(Color.YELLOW);
-            gs.fillRect(780, 860, 100, 100);
-            gs.setColor(Color.RED);
-            gs.fillRect(880, 760, 100, 100);
-            gs.setColor(Color.BLUE);
-            gs.fillRect(880, 860, 100, 100);
-            gs.setColor(Color.GREEN);
-            gs.fillRect(980, 760, 100, 100);
-            gs.setColor(Color.YELLOW);
-            gs.fillRect(980, 860, 100, 100);
-            gs.setColor(Color.RED);
-            gs.fillRect(1080, 760, 100, 100);
-            gs.setColor(Color.BLUE);
-            gs.fillRect(1080, 860, 100, 100);
-            gs.setColor(Color.GREEN);
-            gs.fillRect(1180, 760, 100, 100);
-            gs.setColor(Color.YELLOW);
-            gs.fillRect(1180, 860, 100, 100);
-            */
+            
+            //DisplayTowerData
+            if(DataDisplayer.dd.selected){
+                
+                gs.setColor(Color.WHITE);
+                gs.drawString("Damage: "+DataDisplayer.dd.damage, 10, 475);
+                gs.drawString("Range: "+DataDisplayer.dd.range, 10, 515);
+                if(DataDisplayer.dd.attackSpeed==0){
+                    gs.drawString("Attack Spped: "+ DataDisplayer.dd.attackSpeed, 10, 555);
+                }else{
+                    gs.drawString("Attack Spped: "+ (6000/DataDisplayer.dd.attackSpeed)+" attacks per min", 10, 555);
+                }
+                gs.drawString("Price: "+DataDisplayer.dd.gold, 10, 595);
+                if(DataDisplayer.dd.sellTower){
+                    gs.setColor(Color.BLACK);
+                    gs.fillRect(300, 550, 125, 50);
+                    gs.setColor(Color.WHITE);
+                    gs.drawString("Destroy Tower", 310, 575);
+                }
+            }
+            
+            
+            
+            for(int i=0;i<8;i++){
+                gs.drawImage(imageManager.getTowerIconImage((2*i)+1), 440+(i*75), 470, this);
+                gs.drawImage(imageManager.getTowerIconImage((2*i)+2), 440+(i*75), 545, this);
+            }
 
             //Main gamePanel
             for(int i=0;i<TILE_MAX_X_NUM;i++){
@@ -281,6 +279,8 @@ public class MainPanel extends JFrame implements Runnable{
                 mc.moveMissile();
                 for(int i=MissileData.md.size()-1;i>=0;i--){
                     md=MissileData.md.get(i);
+                    if(md.getParticleX()>0&&md.getParticleTargetX()<WINDOW_WIDTH&&
+                       md.getParticleY()>(10+TILE_HEIGHT)&&md.getParticleY()<(10+(TILE_HEIGHT*TILE_MAX_Y_NUM)))
                     gs.drawImage(md.getParticleIamage(),md.getParticleX(),md.getParticleY(), this);
                 }
             }
@@ -353,6 +353,7 @@ public class MainPanel extends JFrame implements Runnable{
 		new MainFrame(true);
 		MainMenuPage.displayMenuPage();
 		keepGameAlive = false;
-		return 2; // This means DISPOSE_ON_CLOSE
+		start=false;
+                return 2; // This means DISPOSE_ON_CLOSE
 	}
 }

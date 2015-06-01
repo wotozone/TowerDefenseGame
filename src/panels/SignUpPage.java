@@ -1,37 +1,53 @@
 
 package panels;
 
+import com.michael.api.Encoder;
 import includes.GetPassword;
 import includes.Validation;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import main.MainFrame;
 import static main.MainFrame.mainFrame;
 import net.miginfocom.swing.MigLayout;
+import static towerdefenseproject.MysqlCon.connectionStatus;
+import static towerdefenseproject.MysqlCon.createId;
+import static towerdefenseproject.MysqlCon.createTableFromFile;
+import static towerdefenseproject.MysqlCon.dbClose;
+import static towerdefenseproject.MysqlCon.dbOpen;
+import static towerdefenseproject.MysqlCon.numRows;
+import static towerdefenseproject.MysqlCon.query;
+import static towerdefenseproject.MysqlCon.tableExists;
 
 /**
  * @author Chris
  */
 public class SignUpPage implements ActionListener, Runnable {
 	
-	public static JTextField username = new JTextField();
-	public static JTextField email = new JTextField();
-	public static JTextField reEmail = new JTextField();
-	public static JPasswordField password = new JPasswordField();
-	public static JPasswordField rePassword = new JPasswordField();
-	public static JPanel container = new JPanel();
+	public static JTextField username;
+	public static JTextField email;
+	public static JTextField reEmail;
+	public static JPasswordField password;
+	public static JPasswordField rePassword;
 	
 	public static void displaySignUpPage(){
+		username = new JTextField();
+		email = new JTextField();
+		reEmail = new JTextField();
+		password = new JPasswordField();
+		rePassword = new JPasswordField();
 		mainFrame.resetFrame("Create Account","300","400",false,true);
 		MainFrame.activeClass = "SignUpPage";
+		JPanel container = new JPanel();
 		container.setLayout(new MigLayout(mainFrame.debugCheck()+""));
 		JLabel lbUsername = new JLabel("Username:");
 		JLabel lbEmail = new JLabel("Email:");
@@ -88,6 +104,7 @@ public class SignUpPage implements ActionListener, Runnable {
 		String action = ae.getActionCommand();
 		switch(action){
 			case "createAccount":
+				createNewAccount();
 				break;
 			case "goBack":
 				LoginPage.displayLogin();
@@ -97,7 +114,6 @@ public class SignUpPage implements ActionListener, Runnable {
 	
 	@Override
 	public void run() {
-		boolean valid;
 		boolean flag = true;
 		while (flag){
 			try {
@@ -110,30 +126,87 @@ public class SignUpPage implements ActionListener, Runnable {
 				flag = false;
 			}
 			
-			if (username.getText().length()>0) {
+			runValidation();
+		}
+	}
+
+	private void createNewAccount() {
+		if (runValidation()){
+			dbOpen();
+			if (connectionStatus()){
+				int check = numRows( "td_users", "email = '" + email.getText() + "'" );
+				if (check==0){
+					if ( !tableExists( "td_users" ) ) {
+						createTableFromFile( "td_users" );
+					}
+					PreparedStatement state = query( "INSERT INTO td_users (id,username,email,password,created) VALUES (?,?,?,?,?)" );
+					try {
+						state.setString( 1, createId() );
+						state.setString( 2, username.getText() );
+						state.setString( 3, email.getText() );
+						state.setString( 4, Encoder.getMd5( GetPassword.getPassword(password.getPassword()) ) );
+						state.setLong( 5, System.currentTimeMillis() / 1000L );
+						check = state.executeUpdate();
+						if (check>0){
+							dbClose();
+							LoginPage.displayLogin();
+							LoginPage.email.setText(email.getText());
+							LoginPage.password.setText(GetPassword.getPassword(password.getPassword()));
+						} else {
+							JOptionPane.showMessageDialog( null, "We could not create your account, please try again.", "Error", 0 );
+						}
+					} catch (SQLException ex) {
+						JOptionPane.showMessageDialog( null, "Unknown fatal MySQL error occurced. Try again later.", "Fatal Error", 0 );
+					}
+
+				} else {
+					JOptionPane.showMessageDialog( null, "There is a user with that email address already registered.", "Error", 2 );
+				}
+			} else {
+				JOptionPane.showMessageDialog( null, "There is no database connection, you will not be able to play this game until this is fixed.", "Fatal Error", 0 );
+			}
+			dbClose();
+		}
+	}
+
+	private boolean runValidation() {
+		boolean valid = true;
+		
+		if (username.getText().length()>0) {
 				valid = Validation.validateInput( username.getText(), username.getName() );
 				if  (valid==false){ username.setBackground(Color.PINK); } else { username.setBackground(null); }
-			}
-
-			if (email.getText().length()>0) {
-				valid = Validation.validateInput( email.getText(), email.getName() );
-				if  (valid==false){ email.setBackground(Color.PINK); } else { email.setBackground(null); }
-			}
-
-			if (reEmail.getText().length()>0) {
-				valid = Validation.validateInput( reEmail.getText(), reEmail.getName(), reEmail.getText() );
-				if  (valid==false){ reEmail.setBackground(Color.PINK); } else { reEmail.setBackground(null); }
-			}
-
-			if (GetPassword.getPassword(password.getPassword()).length()>0) {
-				valid = Validation.validateInput( GetPassword.getPassword(password.getPassword()), password.getName() );
-				if  (valid==false){ password.setBackground(Color.PINK); } else { password.setBackground(null); }
-			}
-
-			if (GetPassword.getPassword(rePassword.getPassword()).length()>0) {
-				valid = Validation.validateInput( GetPassword.getPassword(rePassword.getPassword()), rePassword.getName() );
-				if  (valid==false){ rePassword.setBackground(Color.PINK); } else { rePassword.setBackground(null); }
-			}
+		} else {
+			valid = false;
 		}
+
+		if (email.getText().length()>0) {
+			valid = Validation.validateInput( email.getText(), email.getName() );
+			if  (valid==false){ email.setBackground(Color.PINK); } else { email.setBackground(null); }
+		} else {
+			valid = false;
+		}
+
+		if (reEmail.getText().length()>0) {
+			valid = Validation.validateInput( reEmail.getText(), reEmail.getName(), reEmail.getText() );
+			if  (valid==false){ reEmail.setBackground(Color.PINK); } else { reEmail.setBackground(null); }
+		} else {
+			valid = false;
+		}
+
+		if (GetPassword.getPassword(password.getPassword()).length()>0) {
+			valid = Validation.validateInput( GetPassword.getPassword(password.getPassword()), password.getName() );
+			if  (valid==false){ password.setBackground(Color.PINK); } else { password.setBackground(null); }
+		} else {
+			valid = false;
+		}
+
+		if (GetPassword.getPassword(rePassword.getPassword()).length()>0) {
+			valid = Validation.validateInput( GetPassword.getPassword(rePassword.getPassword()), rePassword.getName() );
+			if  (valid==false){ rePassword.setBackground(Color.PINK); } else { rePassword.setBackground(null); }
+		} else {
+			valid = false;
+		}
+			
+		return valid;
 	}
 }
